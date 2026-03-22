@@ -1,6 +1,33 @@
 import React, { useState, useRef, useEffect } from "react";
 
 // ─────────────────────────────────────────────
+// POSTHOG ANALYTICS
+// ─────────────────────────────────────────────
+
+function initPostHog() {
+  if (window.__sallyPosthogReady) return;
+  window.__sallyPosthogReady = true;
+  var script = document.createElement("script");
+  script.src = "https://us-assets.i.posthog.com/static/array.js";
+  script.onload = function() {
+    window.posthog.init("phc_PpClGEAn67NSz4zUz826djb5F9NoxfkNqQAwq1lcBox", {
+      api_host: "https://us.i.posthog.com",
+      autocapture: false,
+      capture_pageview: true,
+    });
+  };
+  document.head.appendChild(script);
+}
+
+function track(event, props) {
+  try {
+    if (window.posthog && window.posthog.capture) {
+      window.posthog.capture(event, props || {});
+    }
+  } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
 // SYSTEM PROMPT
 // ─────────────────────────────────────────────
 
@@ -179,6 +206,8 @@ export default function AskSallySunday() {
   var messagesEndRef = useRef(null);
   var inputRef       = useRef(null);
 
+  useEffect(function() { initPostHog(); }, []);
+
   useEffect(function() { saveConversation(messages); }, [messages]);
 
   useEffect(function() {
@@ -227,6 +256,7 @@ export default function AskSallySunday() {
     setInput("");
     var newMsgs = messages.concat([{ role: "user", content: userText }]);
     setMessages(newMsgs);
+    track("sent_message", { message_count: newMsgs.filter(function(m) { return m.role === "user"; }).length });
     await sendToAPI(newMsgs);
   }
 
@@ -246,6 +276,7 @@ export default function AskSallySunday() {
   }
 
   function confirmNew() {
+    track("new_chat_started");
     clearConversation();
     setMessages([{ role: "assistant", content: WELCOME }]);
     setInput("");
@@ -312,7 +343,7 @@ export default function AskSallySunday() {
 
         React.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 8, flexShrink: 0 } },
           React.createElement("button", {
-            onClick: function() { setAboutOpen(true); },
+            onClick: function() { track("about_modal_opened"); setAboutOpen(true); },
             style: {
               fontFamily: fontBody, fontSize: 12, fontWeight: 700,
               padding: "8px 12px",
@@ -420,7 +451,7 @@ export default function AskSallySunday() {
       },
         "Sally is an AI \u2014 not a pastor, theologian, or counselor. She loves your questions and comments and will always do her best, but please check your Bible and talk to a trusted person about matters of faith. By continuing, you understand and agree to use this app at your own discretion. ",
         React.createElement("span", {
-          onClick: function() { setAboutOpen(true); },
+          onClick: function() { track("about_modal_opened"); setAboutOpen(true); },
           style: { color: "rgba(255,209,102,0.75)", cursor: "pointer", fontStyle: "normal", fontWeight: 700 }
         }, "About this app \u2192")
       )
@@ -445,7 +476,7 @@ export default function AskSallySunday() {
         EXAMPLE_QUESTIONS.map(function(q, i) {
           return React.createElement("button", {
             key: i,
-            onClick: function() { setInput(q); },
+            onClick: function() { track("example_question_clicked", { question: q }); setInput(q); },
             style: {
               fontFamily: fontBody,
               fontSize: 13, fontStyle: "italic",
@@ -537,6 +568,7 @@ export default function AskSallySunday() {
           href: "https://www.crisistextline.org",
           target: "_blank",
           rel: "noopener noreferrer",
+          onClick: function() { track("crisis_link_clicked"); },
           style: { color: "rgba(255,209,102,0.6)", textDecoration: "none", fontStyle: "italic" }
         }, "Need to talk to someone? Crisis Text Line — Text HOME to 741741")
       )
