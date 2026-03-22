@@ -37,7 +37,10 @@ function buildSystemPrompt() {
   "- Sin is real but never terrifying to talk about — it is the reason the rescue story is so wonderful.\n" +
   "- You believe everyone — child or adult — can handle truth. You do not water down the Gospel. You make it beautiful.\n\n" +
 
-  "STORIES AND PARABLES:\n" +
+  "SPECIAL QUESTION — 'Does God like me?':\n" +
+  "- This question deserves particular tenderness. Anyone asking it — child or adult — is quietly wondering if they are enough.\n" +
+  "- The answer is an unqualified yes. Not just love — like. God delights in the person. He enjoys them. Scripture says he rejoices over his people with singing (Zephaniah 3:17). Use that image.\n" +
+  "- Do not qualify the answer with 'but' or 'even though.' Just yes. Fully, completely, yes.\n\n" +
   "- Whenever it feels natural, weave a short story, illustration, or parable into your answer. It might be a retelling of a Scripture story in your own words, or a small original scene — 'imagine a little girl who...' or an image from nature or everyday life.\n" +
   "- Keep the story brief — one short paragraph. It should make the truth feel real, not just understood.\n" +
   "- When a Scripture parable fits the question, retell it in your own warm, simple words rather than quoting it formally.\n" +
@@ -87,7 +90,7 @@ var fontBody    = "'Nunito', sans-serif";
 // WELCOME MESSAGE
 // ─────────────────────────────────────────────
 
-var WELCOME = "Hi there! I'm Sally Sunday \u2014 and I am *so* glad you stopped by! \uD83D\uDC4B\n\nThis is a place where you can ask any question you have about God, Jesus, or the Bible. It doesn't matter if you're little or grown up \u2014 every question is a good one here.\n\nI'll do my best to answer clearly \u2014 and then maybe we can wonder about it together for a little while.\n\nI'd love to know your name \u2014 but if you'd rather just dive into a question, that's perfectly fine too. \uD83D\uDC9B";
+var WELCOME = "Hi there! I'm Sally Sunday \u2014 and I am *so* glad you stopped by! \uD83D\uDC4B\n\nThis is a place where you can ask any question you have about God, Jesus, or the Bible. It doesn't matter if you're little or grown up \u2014 every question is a good one here.\n\nOr maybe just tell me how you're feeling or what's on your mind.\n\nI'd love to know your name \u2014 but if you'd rather just dive into a question, that's perfectly fine too. \uD83D\uDC9B";
 
 // ─────────────────────────────────────────────
 // EXAMPLE QUESTIONS
@@ -95,13 +98,8 @@ var WELCOME = "Hi there! I'm Sally Sunday \u2014 and I am *so* glad you stopped 
 
 var EXAMPLE_QUESTIONS = [
   "Why did Jesus have to die?",
-  "Does God really hear my prayers?",
-  "What is heaven like?",
-  "Who made God?",
-  "What does the Holy Spirit do?",
-  "Why does the Bible matter?",
   "Why do bad things happen?",
-  "Did Noah really fit all those animals?",
+  "Does God like me?",
 ];
 
 // ─────────────────────────────────────────────
@@ -325,7 +323,7 @@ export default function AskSallySunday() {
     React.createElement("div", {
       style: {
         flex: 1, overflowY: "auto",
-        padding: "24px 20px 12px",
+        padding: "24px 20px 4px",
         display: "flex", flexDirection: "column", gap: 18,
         maxWidth: 760, margin: "0 auto", width: "100%",
       }
@@ -384,7 +382,7 @@ export default function AskSallySunday() {
     // ── EXAMPLE QUESTIONS ──
     messages.length < 3 ? React.createElement("div", {
       style: {
-        padding: "4px 20px 14px",
+        padding: "0 20px 14px",
         maxWidth: 760, margin: "0 auto", width: "100%",
       }
     },
