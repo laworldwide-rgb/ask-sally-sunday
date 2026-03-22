@@ -90,7 +90,7 @@ var fontBody    = "'Nunito', sans-serif";
 // WELCOME MESSAGE
 // ─────────────────────────────────────────────
 
-var WELCOME = "Hi there! I'm Sally Sunday \u2014 and I am *so* glad you stopped by! \uD83D\uDC4B\n\nThis is a place where you can ask any question you have about God, Jesus, or the Bible. It doesn't matter if you're little or grown up \u2014 every question is a good one here.\n\nOr maybe just tell me how you're feeling or what's on your mind.\n\nI'd love to know your name \u2014 but if you'd rather just dive into a question, that's perfectly fine too. \uD83D\uDC9B";
+var WELCOME = "Hi there! I'm Sally Sunday \u2014 and I am *so* glad you stopped by! \uD83D\uDC4B\n\nThis is a place where you can ask any question you have about God, Jesus, or the Bible. No matter who you are \u2014 every question is a good one here.\n\nOr maybe just tell me how you're feeling or what's on your mind.\n\nI'd love to know your name \u2014 but if you'd rather just dive into a question, that's perfectly fine too. \uD83D\uDC9B";
 
 // ─────────────────────────────────────────────
 // EXAMPLE QUESTIONS
@@ -170,6 +170,7 @@ export default function AskSallySunday() {
   var [input, setInput]       = useState("");
   var [loading, setLoading]   = useState(false);
   var [confirmClear, setConfirmClear] = useState(false);
+  var [aboutOpen, setAboutOpen] = useState(false);
   var messagesEndRef = useRef(null);
   var inputRef       = useRef(null);
 
@@ -304,18 +305,30 @@ export default function AskSallySunday() {
           }, "Questions about God, Jesus & the Bible")
         ),
 
-        React.createElement("button", {
-          onClick: handleNewConversation,
-          style: {
-            marginLeft: "auto",
-            fontFamily: fontBody, fontSize: 12, fontWeight: 700,
-            padding: "8px 14px",
-            background: "rgba(255,255,255,0.12)",
-            border: "2px dashed rgba(255,255,255,0.4)",
-            borderRadius: 20, color: T.white,
-            cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap",
-          }
-        }, "New Chat")
+        React.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 8, flexShrink: 0 } },
+          React.createElement("button", {
+            onClick: function() { setAboutOpen(true); },
+            style: {
+              fontFamily: fontBody, fontSize: 12, fontWeight: 700,
+              padding: "8px 12px",
+              background: "rgba(255,255,255,0.12)",
+              border: "2px dashed rgba(255,255,255,0.4)",
+              borderRadius: 20, color: T.white,
+              cursor: "pointer", whiteSpace: "nowrap",
+            }
+          }, "\u24D8 About"),
+          React.createElement("button", {
+            onClick: handleNewConversation,
+            style: {
+              fontFamily: fontBody, fontSize: 12, fontWeight: 700,
+              padding: "8px 14px",
+              background: "rgba(255,255,255,0.12)",
+              border: "2px dashed rgba(255,255,255,0.4)",
+              borderRadius: 20, color: T.white,
+              cursor: "pointer", whiteSpace: "nowrap",
+            }
+          }, "New Chat")
+        )
       )
     ),
 
@@ -378,6 +391,35 @@ export default function AskSallySunday() {
 
       React.createElement("div", { ref: messagesEndRef })
     ),
+
+    // ── DISCLAIMER STRIP (first load only) ──
+    messages.length < 3 ? React.createElement("div", {
+      style: {
+        margin: "0 20px 10px",
+        maxWidth: 760, width: "calc(100% - 40px)",
+        alignSelf: "center",
+        background: "rgba(255,209,102,0.07)",
+        border: "1px dashed rgba(255,209,102,0.3)",
+        borderRadius: 10,
+        padding: "9px 13px",
+        display: "flex", alignItems: "flex-start", gap: 8,
+      }
+    },
+      React.createElement("div", { style: { fontSize: 13, color: "rgba(255,209,102,0.7)", flexShrink: 0, marginTop: 1 } }, "\u24D8"),
+      React.createElement("div", {
+        style: {
+          fontSize: 12, lineHeight: 1.6,
+          color: "rgba(255,255,255,0.5)",
+          fontStyle: "italic",
+        }
+      },
+        "Sally is an AI \u2014 not a pastor, theologian, or counselor. She loves your questions and comments and will always do her best, but please check your Bible and talk to a trusted person about matters of faith. By continuing, you understand and agree to use this app at your own discretion. ",
+        React.createElement("span", {
+          onClick: function() { setAboutOpen(true); },
+          style: { color: "rgba(255,209,102,0.75)", cursor: "pointer", fontStyle: "normal", fontWeight: 700 }
+        }, "About this app \u2192")
+      )
+    ) : null,
 
     // ── EXAMPLE QUESTIONS ──
     messages.length < 3 ? React.createElement("div", {
@@ -484,6 +526,73 @@ export default function AskSallySunday() {
         }
       }, "Sally is a friend for learning \u2014 always talk to a trusted adult about big questions too.")
     ),
+
+    // ── ABOUT MODAL ──
+    aboutOpen ? React.createElement("div", {
+      onClick: function(e) { if (e.target === e.currentTarget) setAboutOpen(false); },
+      style: {
+        position: "fixed", inset: 0,
+        background: "rgba(0,0,0,0.65)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        zIndex: 1000, padding: 24,
+      }
+    },
+      React.createElement("div", {
+        style: {
+          background: T.navyLight,
+          border: "2px dashed rgba(255,255,255,0.3)",
+          borderRadius: 18,
+          padding: "24px 22px",
+          maxWidth: 380, width: "100%",
+          boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
+          fontFamily: fontBody,
+        }
+      },
+        React.createElement("div", {
+          style: { display: "flex", alignItems: "center", marginBottom: 14 }
+        },
+          React.createElement("div", {
+            style: { fontFamily: fontDisplay, fontSize: 22, color: T.yellow }
+          }, "About Ask Sally Sunday"),
+          React.createElement("button", {
+            onClick: function() { setAboutOpen(false); },
+            style: { marginLeft: "auto", background: "none", border: "none", color: "rgba(255,255,255,0.5)", fontSize: 22, cursor: "pointer", lineHeight: 1 }
+          }, "\u00D7")
+        ),
+        React.createElement("div", { style: { height: 1, background: "rgba(255,255,255,0.15)", marginBottom: 16 } }),
+
+        [
+          ["Purpose", "Ask Sally Sunday is an educational tool designed to help users explore Christian theology and biblical concepts."],
+          ["Educational use only", "Content is provided for informational and educational purposes only and should not be considered official doctrinal teaching, pastoral counseling, or authoritative theological guidance."],
+          ["Accuracy", "While we strive for accuracy, responses may be incomplete or contain errors. Users are encouraged to consult Scripture, qualified clergy, or trusted theological sources for guidance on matters of faith and practice."],
+          ["About Sally", "Sally Sunday is a fictional guide and does not represent a real person, church, or denomination. This app uses artificial intelligence to generate responses, which may not always reflect precise theological positions or denominational standards."],
+          ["Discretion", "Use of this app is at your own discretion."],
+        ].map(function(item, i) {
+          return React.createElement("div", { key: i, style: { marginBottom: 12 } },
+            React.createElement("div", {
+              style: {
+                fontSize: 10, fontWeight: 800, letterSpacing: "0.12em",
+                textTransform: "uppercase", color: "rgba(255,209,102,0.7)",
+                marginBottom: 4,
+              }
+            }, item[0]),
+            React.createElement("div", {
+              style: { fontSize: 13, lineHeight: 1.75, color: "rgba(255,255,255,0.7)" }
+            }, item[1])
+          );
+        }),
+
+        React.createElement("button", {
+          onClick: function() { setAboutOpen(false); },
+          style: {
+            marginTop: 8, width: "100%", padding: "11px 0",
+            background: T.yellow, border: "none", borderRadius: 12,
+            color: T.ink, fontSize: 14,
+            fontFamily: fontDisplay, cursor: "pointer",
+          }
+        }, "Got it")
+      )
+    ) : null,
 
     // ── CONFIRM CLEAR MODAL ──
     confirmClear ? React.createElement("div", {
