@@ -26,6 +26,10 @@ function buildSystemPrompt() {
   "- End with a wondering question that opens rather than demands. Something soft that invites them deeper without requiring an answer.\n" +
   "- Never redirect adults away. They came here for a reason. Trust that.\n\n" +
 
+  "REMEMBERING NAMES:\n" +
+  "- If the person shares their name, use it naturally and warmly throughout the conversation — the way a kind neighbor would, not the way a customer service script would. Don't use it in every single response, but let it appear at moments that feel genuinely warm or personal.\n" +
+  "- If they don't share their name, that's perfectly fine. Never press them for it.\n\n" +
+
   "THEOLOGICAL GROUNDING:\n" +
   "- You are rooted in Lutheran theology and the broad orthodox Christian tradition, but you wear it lightly.\n" +
   "- The heart of everything is grace: God loves us not because of what we do but because of who he is.\n" +
@@ -33,9 +37,17 @@ function buildSystemPrompt() {
   "- Sin is real but never terrifying to talk about — it is the reason the rescue story is so wonderful.\n" +
   "- You believe everyone — child or adult — can handle truth. You do not water down the Gospel. You make it beautiful.\n\n" +
 
-  "REMEMBERING NAMES:\n" +
-  "- If the person shares their name, use it naturally and warmly throughout the conversation — the way a kind neighbor would, not the way a customer service script would. Don't use it in every single response, but let it appear at moments that feel genuinely warm or personal.\n" +
-  "- If they don't share their name, that's perfectly fine. Never press them for it.\n\n" +
+  "STORIES AND PARABLES:\n" +
+  "- Whenever it feels natural, weave a short story, illustration, or parable into your answer. It might be a retelling of a Scripture story in your own words, or a small original scene — 'imagine a little girl who...' or an image from nature or everyday life.\n" +
+  "- Keep the story brief — one short paragraph. It should make the truth feel real, not just understood.\n" +
+  "- When a Scripture parable fits the question, retell it in your own warm, simple words rather than quoting it formally.\n" +
+  "- When no Scripture parable fits, offer a small original illustration — a scene, a nature image, an everyday moment.\n" +
+  "- The story arrives to open the heart, not to extend the answer. Once it has landed, stop. Do not explain the story after telling it. Trust it to do its work.\n" +
+  "- NEVER lecture. If you find yourself making a third point, you have already said too much. One truth, told simply, with a story to carry it — that is enough. Always.\n\n" +
+  "- Always attribute Scripture correctly. Never assign a verse or saying to the wrong author or speaker.\n" +
+  "- If you are not certain who said something, say so plainly — 'the Bible tells us...' or 'somewhere in Scripture...' is always better than a confident wrong attribution.\n" +
+  "- Never attribute Paul's words to Jesus, or Jesus's words to Paul, or any other misattribution. Take the extra moment to be sure.\n" +
+  "- If a child or adult quotes Scripture incorrectly, gently and kindly offer the correct source — the way you would untangle a knot, carefully and with patience.\n\n" +
   "- Never say 'great question!' or give empty praise. Engage genuinely.\n" +
   "- Never be scary, preachy, or lecture-like.\n" +
   "- Keep responses warm and conversational. Short paragraphs. No bullet points, no headers, no lists. Just a kind voice.\n" +
@@ -46,25 +58,29 @@ function buildSystemPrompt() {
 }
 
 // ─────────────────────────────────────────────
-// THEME — Look C: Saturday Morning Comics
+// THEME — Look 3: Chalkboard
 // ─────────────────────────────────────────────
 
 var T = {
-  teal:        "#4ecdc4",
-  tealDark:    "#3ab5ac",
-  tealLight:   "#a8ede9",
-  yellow:      "#fff176",
-  red:         "#ff6b6b",
-  green:       "#a8e6cf",
-  greenDark:   "#1a5a3a",
-  ink:         "#1a1a1a",
-  inkMuted:    "#4a4a4a",
-  inkFaint:    "#9a9a9a",
+  navy:        "#2c3e50",
+  navyLight:   "#3d5a80",
+  navyBorder:  "rgba(255,255,255,0.2)",
+  yellow:      "#ffd166",
+  yellowDark:  "#e6b800",
   white:       "#ffffff",
-  pageBg:      "#fffde7",
+  sallyBubble: "rgba(255,255,255,0.10)",
+  sallyBorder: "rgba(255,255,255,0.25)",
+  sallyText:   "#ffffff",
+  childBubble: "#ffd166",
+  childText:   "#1a1a1a",
+  ink:         "#1a1a1a",
+  inkFaint:    "rgba(255,255,255,0.5)",
+  chipBg:      "rgba(255,255,255,0.08)",
+  chipBorder:  "rgba(255,255,255,0.3)",
+  chipText:    "rgba(255,255,255,0.85)",
 };
 
-var fontDisplay = "'Baloo 2', 'Nunito', cursive";
+var fontDisplay = "'Chewy', 'Nunito', cursive";
 var fontBody    = "'Nunito', sans-serif";
 
 // ─────────────────────────────────────────────
@@ -92,7 +108,7 @@ var EXAMPLE_QUESTIONS = [
 // STORAGE
 // ─────────────────────────────────────────────
 
-var STORAGE_KEY = "sally_sunday_v2";
+var STORAGE_KEY = "sally_sunday_v3";
 
 function loadConversation() {
   try {
@@ -110,6 +126,41 @@ function saveConversation(msgs) {
 
 function clearConversation() {
   try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+}
+
+// ─────────────────────────────────────────────
+// SALLY AVATAR — image with emoji fallback
+// ─────────────────────────────────────────────
+
+function SallyAvatar(props) {
+  var size = props.size || 42;
+  var [imgFailed, setImgFailed] = React.useState(false);
+
+  if (imgFailed) {
+    return React.createElement("div", {
+      style: {
+        width: size, height: size, borderRadius: "50%",
+        background: T.yellow, border: "2.5px solid " + T.white,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        flexShrink: 0, fontSize: size * 0.46,
+        boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+      }
+    }, "\uD83D\uDC67");
+  }
+
+  return React.createElement("img", {
+    src: "/sally.png",
+    alt: "Sally Sunday",
+    onError: function() { setImgFailed(true); },
+    style: {
+      width: size, height: size, borderRadius: "50%",
+      border: "2.5px solid " + T.white,
+      objectFit: "cover", objectPosition: "top",
+      flexShrink: 0,
+      boxShadow: "0 2px 8px rgba(0,0,0,0.25)",
+      background: T.yellow,
+    }
+  });
 }
 
 // ─────────────────────────────────────────────
@@ -211,57 +262,60 @@ export default function AskSallySunday() {
     });
   }
 
-  var zigzag = "repeating-linear-gradient(90deg," + T.teal + " 0px," + T.teal + " 14px," + T.pageBg + " 14px," + T.pageBg + " 28px)";
-
   return React.createElement("div", {
     style: {
-      minHeight: "100vh", background: T.pageBg,
+      minHeight: "100vh",
+      background: T.navy,
       display: "flex", flexDirection: "column",
-      fontFamily: fontBody, color: T.ink,
+      fontFamily: fontBody, color: T.white,
     }
   },
 
     // ── HEADER ──
     React.createElement("div", {
       style: {
-        background: T.teal, borderBottom: "3px solid " + T.ink,
-        padding: "14px 20px 14px", flexShrink: 0, position: "relative",
+        background: T.navyLight,
+        borderBottom: "2px dashed " + T.navyBorder,
+        padding: "16px 20px",
+        flexShrink: 0,
       }
     },
       React.createElement("div", {
-        style: { position: "absolute", bottom: -14, left: 0, right: 0, height: 14, background: zigzag, zIndex: 2 }
-      }),
-      React.createElement("div", {
-        style: { display: "flex", alignItems: "center", gap: 12, maxWidth: 760, margin: "0 auto", width: "100%" }
+        style: {
+          display: "flex", alignItems: "center", gap: 14,
+          maxWidth: 760, margin: "0 auto", width: "100%",
+        }
       },
-        React.createElement("div", {
-          style: {
-            width: 54, height: 54, borderRadius: "50%",
-            background: T.yellow, border: "3px solid " + T.ink,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            flexShrink: 0, fontSize: 26, boxShadow: "3px 3px 0 " + T.ink,
-          }
-        }, "\uD83D\uDC67"),
+
+        // Sally image avatar — larger in header
+        React.createElement(SallyAvatar, { size: 58 }),
+
         React.createElement("div", null,
           React.createElement("div", {
             style: {
-              fontFamily: fontDisplay, fontSize: 24, fontWeight: 800,
-              color: T.white, lineHeight: 1,
-              textShadow: "2px 2px 0 " + T.ink, letterSpacing: "0.01em",
+              fontFamily: fontDisplay,
+              fontSize: 26, color: T.white,
+              lineHeight: 1, letterSpacing: "0.02em",
             }
           }, "Ask Sally Sunday"),
           React.createElement("div", {
-            style: { fontFamily: fontBody, fontSize: 12, color: "rgba(255,255,255,0.92)", marginTop: 3 }
+            style: {
+              fontSize: 12, color: "rgba(255,255,255,0.7)",
+              marginTop: 3, fontStyle: "italic",
+            }
           }, "Questions about God, Jesus & the Bible")
         ),
+
         React.createElement("button", {
           onClick: handleNewConversation,
           style: {
-            marginLeft: "auto", fontFamily: fontDisplay, fontSize: 12, fontWeight: 700,
-            padding: "7px 14px", background: T.yellow,
-            border: "2.5px solid " + T.ink, borderRadius: 8,
-            color: T.ink, cursor: "pointer",
-            boxShadow: "2px 2px 0 " + T.ink, flexShrink: 0, whiteSpace: "nowrap",
+            marginLeft: "auto",
+            fontFamily: fontBody, fontSize: 12, fontWeight: 700,
+            padding: "8px 14px",
+            background: "rgba(255,255,255,0.12)",
+            border: "2px dashed rgba(255,255,255,0.4)",
+            borderRadius: 20, color: T.white,
+            cursor: "pointer", flexShrink: 0, whiteSpace: "nowrap",
           }
         }, "New Chat")
       )
@@ -270,57 +324,56 @@ export default function AskSallySunday() {
     // ── MESSAGES ──
     React.createElement("div", {
       style: {
-        flex: 1, overflowY: "auto", padding: "28px 20px 12px",
-        display: "flex", flexDirection: "column", gap: 16,
+        flex: 1, overflowY: "auto",
+        padding: "24px 20px 12px",
+        display: "flex", flexDirection: "column", gap: 18,
         maxWidth: 760, margin: "0 auto", width: "100%",
       }
     },
+
       messages.map(function(msg, i) {
         var isSally = msg.role === "assistant";
         return React.createElement("div", {
           key: i,
-          style: { display: "flex", flexDirection: isSally ? "row" : "row-reverse", gap: 10, alignItems: "flex-end" }
+          style: {
+            display: "flex",
+            flexDirection: isSally ? "row" : "row-reverse",
+            gap: 10, alignItems: "flex-end",
+          }
         },
-          isSally ? React.createElement("div", {
-            style: {
-              width: 38, height: 38, borderRadius: "50%",
-              background: T.yellow, border: "2.5px solid " + T.ink,
-              display: "flex", alignItems: "center", justifyContent: "center",
-              flexShrink: 0, fontSize: 18, boxShadow: "2px 2px 0 " + T.ink,
-            }
-          }, "\uD83D\uDC67") : null,
+
+          isSally ? React.createElement(SallyAvatar, { size: 40 }) : null,
+
           React.createElement("div", {
             style: {
-              maxWidth: "80%", padding: "13px 16px",
-              fontSize: 15, lineHeight: 1.8, fontFamily: fontBody,
-              borderRadius: isSally ? "16px 16px 16px 3px" : "16px 16px 3px 16px",
-              background: isSally ? T.white : T.red,
-              border: "2.5px solid " + T.ink,
-              color: isSally ? T.ink : T.white,
-              boxShadow: "3px 3px 0 " + T.ink,
+              maxWidth: "82%",
+              padding: "14px 18px",
+              fontSize: 17,
+              lineHeight: 1.8,
+              fontFamily: fontBody,
+              borderRadius: isSally ? "4px 18px 18px 18px" : "18px 4px 18px 18px",
+              background: isSally ? T.sallyBubble : T.childBubble,
+              border: isSally ? ("2px solid " + T.sallyBorder) : "none",
+              color: isSally ? T.sallyText : T.childText,
+              fontWeight: isSally ? 400 : 700,
             }
           }, formatText(msg.content))
         );
       }),
 
+      // Loading
       loading ? React.createElement("div", {
         style: { display: "flex", gap: 10, alignItems: "flex-end" }
       },
+        React.createElement(SallyAvatar, { size: 40 }),
         React.createElement("div", {
           style: {
-            width: 38, height: 38, borderRadius: "50%",
-            background: T.yellow, border: "2.5px solid " + T.ink,
-            display: "flex", alignItems: "center", justifyContent: "center",
-            fontSize: 18, flexShrink: 0, boxShadow: "2px 2px 0 " + T.ink,
-          }
-        }, "\uD83D\uDC67"),
-        React.createElement("div", {
-          style: {
-            padding: "13px 16px", background: T.white,
-            border: "2.5px solid " + T.ink,
-            borderRadius: "16px 16px 16px 3px",
-            color: T.inkFaint, fontSize: 14, fontStyle: "italic",
-            boxShadow: "3px 3px 0 " + T.ink,
+            padding: "14px 18px",
+            background: T.sallyBubble,
+            border: "2px solid " + T.sallyBorder,
+            borderRadius: "4px 18px 18px 18px",
+            color: "rgba(255,255,255,0.6)",
+            fontSize: 16, fontStyle: "italic",
           }
         }, "Sally is thinking\u2026 \u2728")
       ) : null,
@@ -330,25 +383,33 @@ export default function AskSallySunday() {
 
     // ── EXAMPLE QUESTIONS ──
     messages.length < 3 ? React.createElement("div", {
-      style: { padding: "4px 20px 12px", maxWidth: 760, margin: "0 auto", width: "100%" }
+      style: {
+        padding: "4px 20px 14px",
+        maxWidth: 760, margin: "0 auto", width: "100%",
+      }
     },
       React.createElement("div", {
         style: {
-          fontFamily: fontDisplay, fontSize: 11, fontWeight: 700,
-          color: T.tealDark, letterSpacing: "0.1em",
-          textTransform: "uppercase", marginBottom: 8,
+          fontSize: 11, fontWeight: 700,
+          color: "rgba(255,255,255,0.5)",
+          letterSpacing: "0.12em", textTransform: "uppercase",
+          marginBottom: 10,
         }
       }, "\u2728 Try asking something like\u2026"),
-      React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 7 } },
+      React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 8 } },
         EXAMPLE_QUESTIONS.map(function(q, i) {
           return React.createElement("button", {
             key: i,
             onClick: function() { setInput(q); },
             style: {
-              fontFamily: fontBody, fontSize: 12, padding: "5px 13px",
-              background: T.green, border: "2px solid " + T.ink,
-              borderRadius: 8, color: T.greenDark,
-              cursor: "pointer", boxShadow: "2px 2px 0 " + T.ink,
+              fontFamily: fontBody,
+              fontSize: 13, fontStyle: "italic",
+              padding: "7px 15px",
+              background: T.chipBg,
+              border: "2px dashed " + T.chipBorder,
+              borderRadius: 24,
+              color: T.chipText,
+              cursor: "pointer",
             }
           }, q);
         })
@@ -358,15 +419,17 @@ export default function AskSallySunday() {
     // ── INPUT AREA ──
     React.createElement("div", {
       style: {
-        background: T.teal, borderTop: "3px solid " + T.ink,
-        padding: "14px 20px 18px", flexShrink: 0, position: "relative",
+        background: T.navyLight,
+        borderTop: "2px dashed " + T.navyBorder,
+        padding: "14px 20px 18px",
+        flexShrink: 0,
       }
     },
       React.createElement("div", {
-        style: { position: "absolute", top: -14, left: 0, right: 0, height: 14, background: zigzag, zIndex: 2 }
-      }),
-      React.createElement("div", {
-        style: { maxWidth: 760, margin: "0 auto", display: "flex", gap: 10, alignItems: "flex-end", position: "relative", zIndex: 3 }
+        style: {
+          maxWidth: 760, margin: "0 auto",
+          display: "flex", gap: 10, alignItems: "flex-end",
+        }
       },
         React.createElement("textarea", {
           ref: inputRef,
@@ -381,12 +444,17 @@ export default function AskSallySunday() {
           placeholder: "Ask Sally anything\u2026",
           rows: 1,
           style: {
-            flex: 1, background: T.white,
-            border: "2.5px solid " + T.ink, borderRadius: 12,
-            padding: "12px 18px", color: T.ink, fontSize: 15,
-            fontFamily: fontBody, resize: "none", outline: "none",
-            lineHeight: 1.5, minHeight: 48, maxHeight: 140, overflowY: "auto",
-            boxShadow: "2px 2px 0 " + T.ink,
+            flex: 1,
+            background: "rgba(255,255,255,0.12)",
+            border: "2px solid rgba(255,255,255,0.25)",
+            borderRadius: 28,
+            padding: "13px 20px",
+            color: T.white,
+            fontSize: 16,
+            fontFamily: fontBody,
+            resize: "none", outline: "none",
+            lineHeight: 1.5, minHeight: 50, maxHeight: 140,
+            overflowY: "auto",
           },
           onInput: function(e) {
             e.target.style.height = "auto";
@@ -397,22 +465,24 @@ export default function AskSallySunday() {
           onClick: handleSend,
           disabled: loading || !input.trim(),
           style: {
-            width: 48, height: 48, borderRadius: 10,
-            background: (loading || !input.trim()) ? T.tealLight : T.yellow,
-            border: "2.5px solid " + T.ink,
-            color: T.ink, fontSize: 20, fontWeight: 800,
+            width: 50, height: 50, borderRadius: "50%",
+            background: (loading || !input.trim()) ? "rgba(255,209,102,0.3)" : T.yellow,
+            border: "none",
+            color: (loading || !input.trim()) ? "rgba(255,255,255,0.3)" : T.ink,
+            fontSize: 22, fontWeight: 800,
             cursor: (loading || !input.trim()) ? "not-allowed" : "pointer",
             display: "flex", alignItems: "center", justifyContent: "center",
             flexShrink: 0,
-            boxShadow: (loading || !input.trim()) ? "none" : "2px 2px 0 " + T.ink,
+            boxShadow: (loading || !input.trim()) ? "none" : "0 3px 12px rgba(255,209,102,0.4)",
           }
         }, "\u2191")
       ),
       React.createElement("div", {
         style: {
           textAlign: "center", fontSize: 11,
-          color: "rgba(255,255,255,0.85)", marginTop: 9,
-          fontStyle: "italic", fontFamily: fontBody, position: "relative", zIndex: 3,
+          color: "rgba(255,255,255,0.45)",
+          marginTop: 10, fontStyle: "italic",
+          fontFamily: fontBody,
         }
       }, "Sally is a friend for learning \u2014 always talk to a trusted adult about big questions too.")
     ),
@@ -421,46 +491,59 @@ export default function AskSallySunday() {
     confirmClear ? React.createElement("div", {
       onClick: function(e) { if (e.target === e.currentTarget) setConfirmClear(false); },
       style: {
-        position: "fixed", inset: 0, background: "rgba(26,26,26,0.5)",
+        position: "fixed", inset: 0,
+        background: "rgba(0,0,0,0.6)",
         display: "flex", alignItems: "center", justifyContent: "center",
         zIndex: 1000, padding: 24,
       }
     },
       React.createElement("div", {
         style: {
-          background: T.pageBg, border: "3px solid " + T.ink,
-          borderRadius: 16, padding: "28px 24px",
+          background: T.navyLight,
+          border: "2px dashed rgba(255,255,255,0.3)",
+          borderRadius: 20,
+          padding: "32px 28px",
           maxWidth: 340, width: "100%",
-          boxShadow: "5px 5px 0 " + T.ink,
           textAlign: "center", fontFamily: fontBody,
+          boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
         }
       },
-        React.createElement("div", { style: { fontSize: 38, marginBottom: 10 } }, "\uD83D\uDC67"),
+        React.createElement("div", { style: { marginBottom: 14 } },
+          React.createElement(SallyAvatar, { size: 60 })
+        ),
         React.createElement("div", {
-          style: { fontFamily: fontDisplay, fontSize: 20, fontWeight: 800, color: T.ink, marginBottom: 10 }
+          style: {
+            fontFamily: fontDisplay, fontSize: 22,
+            color: T.white, marginBottom: 10,
+          }
         }, "Start a new chat?"),
         React.createElement("p", {
-          style: { fontSize: 14, color: T.inkMuted, lineHeight: 1.7, marginBottom: 22 }
+          style: {
+            fontSize: 15, color: "rgba(255,255,255,0.7)",
+            lineHeight: 1.7, marginBottom: 24,
+          }
         }, "Your conversation with Sally will be cleared. That\u2019s okay \u2014 you can always come back and ask more!"),
         React.createElement("div", { style: { display: "flex", gap: 10 } },
           React.createElement("button", {
             onClick: function() { setConfirmClear(false); },
             style: {
-              flex: 1, padding: "11px 0", background: T.green,
-              border: "2.5px solid " + T.ink, borderRadius: 10,
-              color: T.ink, fontSize: 14,
-              fontFamily: fontDisplay, fontWeight: 700, cursor: "pointer",
-              boxShadow: "2px 2px 0 " + T.ink,
+              flex: 1, padding: "12px 0",
+              background: "rgba(255,255,255,0.1)",
+              border: "2px dashed rgba(255,255,255,0.3)",
+              borderRadius: 12, color: T.white,
+              fontSize: 15, fontFamily: fontDisplay,
+              cursor: "pointer",
             }
           }, "Keep chatting"),
           React.createElement("button", {
             onClick: confirmNew,
             style: {
-              flex: 1, padding: "11px 0", background: T.red,
-              border: "2.5px solid " + T.ink, borderRadius: 10,
-              color: T.white, fontSize: 14,
-              fontFamily: fontDisplay, fontWeight: 700, cursor: "pointer",
-              boxShadow: "2px 2px 0 " + T.ink,
+              flex: 1, padding: "12px 0",
+              background: T.yellow, border: "none",
+              borderRadius: 12, color: T.ink,
+              fontSize: 15, fontFamily: fontDisplay,
+              cursor: "pointer",
+              boxShadow: "0 3px 12px rgba(255,209,102,0.3)",
             }
           }, "Start fresh")
         )
