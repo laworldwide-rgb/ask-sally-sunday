@@ -678,7 +678,7 @@ export default function AskSallySunday() {
           onClick: function() { track("crisis_link_clicked"); },
           style: { color: "rgba(255,209,102,0.6)", textDecoration: "none", fontStyle: "italic" }
         }, "Need to talk to someone? Crisis Text Line — Text HOME to 741741")
-      )
+      ),
       React.createElement("div", {
         style: {
           textAlign: "center", fontSize: 10,
