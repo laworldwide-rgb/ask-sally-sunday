@@ -122,7 +122,7 @@ var fontBody    = "'Nunito', sans-serif";
 // WELCOME MESSAGE
 // ─────────────────────────────────────────────
 
-var WELCOME = "Hi there! I'm Sally Sunday \u2014 and I am *so* glad you stopped by! \uD83D\uDC4B\n\nThis is a place where you can ask any question you have about God, Jesus, or the Bible. No matter who you are \u2014 every question is a good one here.\n\nOr maybe just tell me how you're feeling or what's on your mind.\n\nI'd love to know your name \u2014 but if you'd rather just dive into a question, that's perfectly fine too. \uD83D\uDC9B";
+var WELCOME = "Hi! I'm Sally Sunday \u2014 and I am so glad you stopped by! \uD83D\uDC4B\n\nWhether you're little or grown, every question and comment is a good one here.\n\nI'd love to know your name \u2014 though if you'd rather just dive in, that's perfectly fine too. \uD83D\uDC9B";
 
 // ─────────────────────────────────────────────
 // EXAMPLE QUESTIONS
