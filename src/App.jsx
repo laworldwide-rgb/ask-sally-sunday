@@ -28,6 +28,85 @@ function track(event, props) {
 }
 
 // ─────────────────────────────────────────────
+// PDF EXPORT
+// ─────────────────────────────────────────────
+
+function downloadConversationPDF(messages) {
+  var script = document.createElement("script");
+  script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+  script.onload = function() {
+    var jsPDF = window.jspdf.jsPDF;
+    var doc = new jsPDF({ unit: "pt", format: "letter" });
+    var pageW = doc.internal.pageSize.getWidth();
+    var pageH = doc.internal.pageSize.getHeight();
+    var margin = 60;
+    var contentW = pageW - margin * 2;
+    var y = margin;
+
+    // Header
+    doc.setFillColor(61, 90, 128);
+    doc.rect(0, 0, pageW, 70, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.setFont("times", "bold");
+    doc.text("Ask Sally Sunday — Conversation", margin, 32);
+    doc.setFontSize(10);
+    doc.setFont("times", "normal");
+    doc.text("Saved " + new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }), margin, 52);
+
+    // Yellow rule
+    doc.setDrawColor(255, 209, 102);
+    doc.setLineWidth(1.5);
+    doc.line(margin, 72, pageW - margin, 72);
+
+    y = 100;
+
+    messages.forEach(function(msg) {
+      var isAssistant = msg.role === "assistant";
+      var label = isAssistant ? "Sally Sunday" : "You";
+      var labelColor = isAssistant ? [61, 90, 128] : [44, 44, 44];
+
+      doc.setFontSize(9);
+      doc.setFont("times", "bold");
+      doc.setTextColor(labelColor[0], labelColor[1], labelColor[2]);
+      doc.text(label.toUpperCase(), margin, y);
+      y += 14;
+
+      doc.setFontSize(11);
+      doc.setFont("times", "normal");
+      doc.setTextColor(26, 22, 16);
+      var lines = doc.splitTextToSize(msg.content, contentW);
+      lines.forEach(function(line) {
+        if (y > pageH - margin) {
+          doc.addPage();
+          y = margin;
+          doc.setDrawColor(255, 209, 102);
+          doc.setLineWidth(0.5);
+          doc.line(margin, margin - 10, pageW - margin, margin - 10);
+        }
+        doc.text(line, margin, y);
+        y += 16;
+      });
+
+      doc.setDrawColor(192, 208, 210);
+      doc.setLineWidth(0.5);
+      doc.line(margin, y + 4, pageW - margin, y + 4);
+      y += 18;
+    });
+
+    // Footer
+    doc.setFontSize(9);
+    doc.setTextColor(150, 140, 120);
+    doc.setFont("times", "italic");
+    doc.text("\u00A9 2025 Emerald City Sanctuary. Ask Sally Sunday is a ministry tool of Emerald City Sanctuary.", margin, pageH - 30);
+    doc.text("asksallysunday.vercel.app", pageW - margin, pageH - 30, { align: "right" });
+
+    doc.save("SallySunday-Conversation-" + new Date().toISOString().slice(0,10) + ".pdf");
+  };
+  document.head.appendChild(script);
+}
+
+// ─────────────────────────────────────────────
 // SYSTEM PROMPT
 // ─────────────────────────────────────────────
 
@@ -370,6 +449,17 @@ export default function AskSallySunday() {
               cursor: "pointer", whiteSpace: "nowrap",
             }
           }, "\u24D8 About"),
+          messages.length > 1 ? React.createElement("button", {
+            onClick: function() { track("saved_conversation"); downloadConversationPDF(messages); },
+            style: {
+              fontFamily: fontBody, fontSize: 12, fontWeight: 700,
+              padding: "8px 12px",
+              background: "rgba(255,255,255,0.12)",
+              border: "2px dashed rgba(255,255,255,0.4)",
+              borderRadius: 20, color: T.white,
+              cursor: "pointer", whiteSpace: "nowrap",
+            }
+          }, "\u2193 Save Chat") : null,
           React.createElement("button", {
             onClick: handleNewConversation,
             style: {
@@ -589,6 +679,14 @@ export default function AskSallySunday() {
           style: { color: "rgba(255,209,102,0.6)", textDecoration: "none", fontStyle: "italic" }
         }, "Need to talk to someone? Crisis Text Line — Text HOME to 741741")
       )
+      React.createElement("div", {
+        style: {
+          textAlign: "center", fontSize: 10,
+          color: "rgba(255,255,255,0.25)",
+          marginTop: 6, fontFamily: fontBody,
+          fontStyle: "italic",
+        }
+      }, "\u00A9 2025 Emerald City Sanctuary. Ask Sally Sunday is a ministry tool of Emerald City Sanctuary.")
     ),
 
     // ── ABOUT MODAL ──
@@ -646,10 +744,19 @@ export default function AskSallySunday() {
           );
         }),
 
+        React.createElement("div", {
+          style: {
+            textAlign: "center", fontSize: 11,
+            color: "rgba(255,255,255,0.35)",
+            fontStyle: "italic", marginTop: 16, marginBottom: 8,
+            fontFamily: fontBody,
+          }
+        }, "\u00A9 2025 Emerald City Sanctuary. Ask Sally Sunday is a ministry tool of Emerald City Sanctuary."),
+
         React.createElement("button", {
           onClick: function() { setAboutOpen(false); },
           style: {
-            marginTop: 8, width: "100%", padding: "11px 0",
+            width: "100%", padding: "11px 0",
             background: T.yellow, border: "none", borderRadius: 12,
             color: T.ink, fontSize: 14,
             fontFamily: fontDisplay, cursor: "pointer",
