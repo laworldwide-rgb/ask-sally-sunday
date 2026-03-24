@@ -299,10 +299,26 @@ export default function AskSallySunday() {
   var [loading, setLoading]   = useState(false);
   var [confirmClear, setConfirmClear] = useState(false);
   var [aboutOpen, setAboutOpen] = useState(false);
+  var [installPrompt, setInstallPrompt] = useState(null);
   var messagesEndRef = useRef(null);
   var inputRef       = useRef(null);
 
   useEffect(function() { initPostHog(); }, []);
+
+  useEffect(function() {
+    var handler = function(e) {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return function() { window.removeEventListener("beforeinstallprompt", handler); };
+  }, []);
+
+  function handleInstall() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    installPrompt.userChoice.then(function() { setInstallPrompt(null); });
+  }
 
   useEffect(function() { saveConversation(messages); }, [messages]);
 
@@ -437,7 +453,7 @@ export default function AskSallySunday() {
           }, "Questions about God, Jesus & the Bible")
         ),
 
-        React.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 8, flexShrink: 0 } },
+        React.createElement("div", { style: { marginLeft: "auto", display: "flex", gap: 8, flexShrink: 0, flexWrap: "wrap", justifyContent: "flex-end" } },
           React.createElement("button", {
             onClick: function() { track("about_modal_opened"); setAboutOpen(true); },
             style: {
@@ -460,6 +476,17 @@ export default function AskSallySunday() {
               cursor: "pointer", whiteSpace: "nowrap",
             }
           }, "\u2193 Save Chat") : null,
+          installPrompt ? React.createElement("button", {
+            onClick: function() { track("install_prompt_clicked"); handleInstall(); },
+            style: {
+              fontFamily: fontBody, fontSize: 12, fontWeight: 700,
+              padding: "8px 12px",
+              background: "rgba(255,209,102,0.2)",
+              border: "2px dashed rgba(255,209,102,0.6)",
+              borderRadius: 20, color: T.yellow,
+              cursor: "pointer", whiteSpace: "nowrap",
+            }
+          }, "\u2B07 Add to Home Screen") : null,
           React.createElement("button", {
             onClick: handleNewConversation,
             style: {
