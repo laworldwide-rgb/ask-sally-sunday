@@ -98,7 +98,7 @@ function downloadConversationPDF(messages) {
     doc.setFontSize(9);
     doc.setTextColor(150, 140, 120);
     doc.setFont("times", "italic");
-    doc.text("\u00A9 2025 Emerald City Sanctuary. Ask Sally Sunday is a ministry tool of Emerald City Sanctuary.", margin, pageH - 30);
+    doc.text("\u00A9 2025 Ellery Aguayo. Ask Sally Sunday is a ministry of Emerald City Sanctuary.", margin, pageH - 30);
     doc.text("asksallysunday.vercel.app", pageW - margin, pageH - 30, { align: "right" });
 
     doc.save("SallySunday-Conversation-" + new Date().toISOString().slice(0,10) + ".pdf");
@@ -686,7 +686,7 @@ export default function AskSallySunday() {
           marginTop: 6, fontFamily: fontBody,
           fontStyle: "italic",
         }
-      }, "\u00A9 2025 Emerald City Sanctuary. Ask Sally Sunday is a ministry tool of Emerald City Sanctuary.")
+      }, "\u00A9 2025 Ellery Aguayo. Ask Sally Sunday is a ministry of Emerald City Sanctuary.")
     ),
 
     // ── ABOUT MODAL ──
@@ -751,7 +751,7 @@ export default function AskSallySunday() {
             fontStyle: "italic", marginTop: 16, marginBottom: 8,
             fontFamily: fontBody,
           }
-        }, "\u00A9 2025 Emerald City Sanctuary. Ask Sally Sunday is a ministry tool of Emerald City Sanctuary."),
+        }, "\u00A9 2025 Ellery Aguayo. Ask Sally Sunday is a ministry of Emerald City Sanctuary."),
 
         React.createElement("button", {
           onClick: function() { setAboutOpen(false); },
